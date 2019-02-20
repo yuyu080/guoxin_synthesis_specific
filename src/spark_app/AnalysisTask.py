@@ -49,7 +49,7 @@ class Sample:
         # 读取基础指标
         index_df = spark.sql("select * from {} where dt='{}'".format(INDEX_TABLE, table_dt))
         # 获取样本
-        sample_hdfs_path = "{}/field_name_list_{}".format(HDFS_PATH, field_id)
+        sample_hdfs_path = "{}/field_name_list_{}".format(HDFS_OUT, field_id)
         sample_df = spark.read.csv(
             sample_hdfs_path, sep="|"
         ).withColumnRenamed(
@@ -332,6 +332,7 @@ class Test:
 if __name__ == '__main__':
     LOCAL_PATH = "/home/bbders/zhaoyunfeng"
     HDFS_PATH = '/user/bbders/zhaoyunfeng/'
+    HDFS_OUT = '/user/bbders/zhaoyunfeng/guoxing_out/'
     INDEX_TABLE = 'guoxin.test'
     args = Test.args7
     spark = get_spark_session()
