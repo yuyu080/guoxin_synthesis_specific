@@ -43,7 +43,7 @@ class TimeSeriesAnalysis:
         # 保存数据，后端画图
         file_name = str(uuid.uuid1()) + '.pickle'
         try:
-            df.fillna(0).to_pickle(file_name)
+            df.fillna(0).to_pickle(os.path.join(local_path, file_name))
             os.system(
                 '''
                 hadoop fs -put {} {}
@@ -55,7 +55,7 @@ class TimeSeriesAnalysis:
             os.system(
                 '''
                 rm {}
-                '''.format(file_name)
+                '''.format(os.path.join(local_path, file_name))
             )
             return os.path.join(hdfs_path, file_name)
         except:
