@@ -336,8 +336,8 @@ if __name__ == '__main__':
     args = Test.args7
     spark = get_spark_session()
 
-    #sample = Sample('5ee8105508474fd3b699407814804edb', ['ruanzhu_cnt', 'zhuanli_cnt'], has_serire=True)
-    sample = SampleTest("/home/bbders/zhaoyunfeng/test.pickle")
+    sample = Sample('5ee8105508474fd3b699407814804edb', ['ruanzhu_cnt', 'zhuanli_cnt'], has_serire=True)
+    #sample = SampleTest("/home/bbders/zhaoyunfeng/test.pickle")
 
     analysisTask = AnalysisTask(args)
     result = analysisTask.get_statistical_information()
