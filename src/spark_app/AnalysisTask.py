@@ -10,11 +10,9 @@ from pyspark.sql import SparkSession
 from common import *
 
 class Sample:
-    INDEX_TABLE = 'guoxin.test'
-    HDFS_PATH = HDFS_PATH
 
     def __init__(self, field_id, index_cols, has_serire=False):
-        partitions = self.get_table_partition(Sample.INDEX_TABLE)
+        partitions = self.get_table_partition(INDEX_TABLE)
         if not has_serire:
             # 默认取最新的数据
             self.df = self.get_pandas_df(
@@ -35,7 +33,7 @@ class Sample:
         '''获取所有分区'''
         dts = map(
             lambda r: r.partition.split('=')[1],
-            spark.sql('show partitions {}'.format(Sample.INDEX_TABLE)).collect()
+            spark.sql('show partitions {}'.format(INDEX_TABLE)).collect()
         )
         return list(dts)
 
@@ -49,9 +47,9 @@ class Sample:
     def get_pandas_df(self, field_id, index_cols, table_dt):
         '''获取单个样本'''
         # 读取基础指标
-        index_df = spark.sql("select * from {} where dt='{}'".format(Sample.INDEX_TABLE, table_dt))
+        index_df = spark.sql("select * from {} where dt='{}'".format(INDEX_TABLE, table_dt))
         # 获取样本
-        sample_hdfs_path = "{}/field_name_list_{}".format(Sample.HDFS_PATH, field_id)
+        sample_hdfs_path = "{}/field_name_list_{}".format(HDFS_PATH, field_id)
         sample_df = spark.read.csv(
             sample_hdfs_path, sep="|"
         ).withColumnRenamed(
@@ -334,6 +332,7 @@ class Test:
 if __name__ == '__main__':
     LOCAL_PATH = "/home/bbders/zhaoyunfeng"
     HDFS_PATH = '/user/bbders/zhaoyunfeng/'
+    INDEX_TABLE = 'guoxin.test'
     args = Test.args7
     spark = get_spark_session()
 
