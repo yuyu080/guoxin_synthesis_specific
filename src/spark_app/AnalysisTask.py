@@ -56,7 +56,7 @@ class Sample:
             '_c0', 'bbd_qyxx_id'
         ).withColumnRenamed(
             '_c1', 'company_name'
-        ).limit(50)
+        )
 
         # 获取指标
         tid_df = sample_df.select(
@@ -102,8 +102,7 @@ class AnalysisTask:
         self.index_ids = args['index_ids']
         self.index_type = args['index_type']
         self.df = sample.df
-        self.dfs = [('time1', sample.df), ('time2', sample.df), ('time3', sample.df),
-                    ('time4', sample.df)]  # sample.dfs #
+        self.dfs = sample.dfs
         self.local_path = LOCAL_PATH
         self.hdfs_path = HDFS_PATH
 
@@ -323,7 +322,7 @@ class Test:
         'analysis_model': 'synthesis_analysis',
         'analysis_type': 'time_series_analysis',
         'analysis_method': 'history',
-        'index_id': 'ruanzhu_cnt',
+        'index_id': 'punish_type',
         'index_ids': ['ruanzhu_cnt', 'zhuanli_cnt'],
         'index_type': []
     }
@@ -335,9 +334,13 @@ if __name__ == '__main__':
     HDFS_OUT = '/user/bbders/zhaoyunfeng/guoxing_out/'
     INDEX_TABLE = 'guoxin.test'
     args = Test.args7
+    if args['index_id']:
+        cols = args['index_ids'].append(args['index_id'])
+    else:
+        cols = args['index_ids']
     spark = get_spark_session()
 
-    sample = Sample('5ee8105508474fd3b699407814804edb', ['ruanzhu_cnt', 'zhuanli_cnt'], has_serire=True)
+    sample = Sample('5ee8105508474fd3b699407814804edb', cols, has_serire=True)
     #sample = SampleTest("/home/bbders/zhaoyunfeng/test.pickle")
 
     analysisTask = AnalysisTask(args)
