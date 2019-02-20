@@ -333,9 +333,10 @@ if __name__ == '__main__':
     HDFS_PATH = '/user/bbders/zhaoyunfeng/'
     HDFS_OUT = '/user/bbders/zhaoyunfeng/guoxing_out/'
     INDEX_TABLE = 'guoxin.test'
-    args = Test.args7
+    args = Test.args8
     if args['index_id']:
-        cols = args['index_ids'].append(args['index_id'])
+        cols = args['index_ids']
+        cols.append(args['index_id'])
     else:
         cols = args['index_ids']
     spark = get_spark_session()
