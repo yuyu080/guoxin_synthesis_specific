@@ -11,7 +11,7 @@ from common import *
 
 class Sample:
     INDEX_TABLE = 'guoxin.test'
-    HDFS_PATH = '/user/bbders/zhaoyunfeng/'
+    HDFS_PATH = HDFS_PATH
 
     def __init__(self, field_id, index_cols, has_serire=False):
         partitions = self.get_table_partition(Sample.INDEX_TABLE)
@@ -334,7 +334,7 @@ class Test:
 if __name__ == '__main__':
     LOCAL_PATH = "/home/bbders/zhaoyunfeng"
     HDFS_PATH = '/user/bbders/zhaoyunfeng/'
-    args = Test.args5
+    args = Test.args7
     spark = get_spark_session()
 
     #sample = Sample('5ee8105508474fd3b699407814804edb', ['ruanzhu_cnt', 'zhuanli_cnt'], has_serire=True)
