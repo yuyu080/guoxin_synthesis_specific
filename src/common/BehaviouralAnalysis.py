@@ -35,8 +35,8 @@ class BehaviouralAnalysis:
                 '''.format(file_name)
             )
             return os.path.join(hdfs_path, file_name)
-        except:
-            return os.path.join(hdfs_path, file_name)
+        except Exception as e:
+            return "ERROR: " + str(e)
 
     @staticmethod
     def clustering_analysis(df, analysis_cols, local_path, hdfs_path):
@@ -59,5 +59,5 @@ class BehaviouralAnalysis:
                 '''.format(os.path.join(local_path, file_name))
             )
             return os.path.join(hdfs_path, file_name)
-        except:
-            return os.path.join(hdfs_path, file_name)
+        except Exception as e:
+            return "ERROR: "+ str(e)
