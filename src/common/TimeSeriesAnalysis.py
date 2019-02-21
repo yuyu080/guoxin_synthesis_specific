@@ -37,9 +37,10 @@ class TimeSeriesAnalysis:
                 predic_series.append(
                     (k, 0.5 * d_list[i - 1][1] + 0.3 * d_list[i - 2][1] + 0.2 * d_list[i - 3][1])
                 )
-        predic_series.append(
-            (get_next_date(d_list[-1][0]), 0.5 * d_list[-1][1] + 0.3 * d_list[-2][1] + 0.2 * d_list[-3][1])
-        )
+        if len(d_list) >=3:
+            predic_series.append(
+                (get_next_date(d_list[-1][0]), 0.5*d_list[-1][1]+0.3*d_list[-2][1]+0.2*d_list[-3][1])
+            )
         return CalculateMethod.format_dict_2({
             'now_series': now_series,
             'predic_series': dict(predic_series)
