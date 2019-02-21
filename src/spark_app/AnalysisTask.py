@@ -7,7 +7,7 @@ from pyspark.sql import types as tp
 from pyspark.sql import Row
 from pyspark.sql import SparkSession
 
-from ..common import *
+from common import *
 
 class Sample:
 
@@ -308,7 +308,7 @@ class Test:
         'analysis_method': 'correlation_analysis',
         'index_id': None,
         'index_ids': ['ruanzhu_cnt', 'zhuanli_cnt'],
-        'index_type': []
+        'index_type': ''
     }
 
     args7 = {
@@ -317,7 +317,7 @@ class Test:
         'analysis_method': 'clustering_analysis',
         'index_id': None,
         'index_ids': ['ruanzhu_cnt', 'zhuanli_cnt'],
-        'index_type': []
+        'index_type': ''
     }
 
     args8 = {
@@ -326,7 +326,7 @@ class Test:
         'analysis_method': 'correlation',
         'index_id': 'ruanzhu_cnt',
         'index_ids': ['ruanzhu_cnt', 'zhuanli_cnt'],
-        'index_type': []
+        'index_type': ''
     }
 
     args9 = {
@@ -335,7 +335,7 @@ class Test:
         'analysis_method': 'history',
         'index_id': 'ruanzhu_cnt',
         'index_ids': ['ruanzhu_cnt', 'zhuanli_cnt'],
-        'index_type': []
+        'index_type': ''
     }
 
     args10 = {
@@ -343,8 +343,8 @@ class Test:
         'analysis_type': 'time_series_analysis',
         'analysis_method': 'prediction',
         'index_id': 'ruanzhu_cnt',
-        'index_ids': None,
-        'index_type': []
+        'index_ids': [],
+        'index_type': ''
     }
 
 
