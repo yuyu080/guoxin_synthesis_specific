@@ -1,13 +1,16 @@
 import os
-import pandas as pd
 
+import pandas as pd
 from pyspark.conf import SparkConf
 from pyspark.sql import functions as fun
 from pyspark.sql import types as tp
 from pyspark.sql import Row
 from pyspark.sql import SparkSession
+from elasticsearch import Elasticsearch
 
+from utils.elasticsearchUtil import ES_Utiles
 from common import *
+
 
 class Sample:
 
@@ -255,6 +258,8 @@ def get_spark_session():
 
     return spark
 
+def es_to_hdfs(filed_id):
+
 
 class Test:
     args1 = {
@@ -349,11 +354,30 @@ class Test:
 
 
 if __name__ == '__main__':
+
     LOCAL_PATH = "/home/bbders/zhaoyunfeng"
     HDFS_PATH = '/user/bbders/zhaoyunfeng/'
+    HDFS_IN = '/user/bbders/zhaoyunfeng/guoxing_in/'
     HDFS_OUT = '/user/bbders/zhaoyunfeng/guoxing_out/'
+    LOCAL_ES_SOURCE = '{}/es_data/'.format(LOCAL_PATH)
+
+    # 基础指标库
     INDEX_TABLE = 'guoxin.test'
-    args = Test.args8
+
+    # es连接信息配置
+    ES_NODES = '10.28.103.20'
+    CLUSTERS_NAME = 'test-opslog'
+    ES_PORT = '39200'
+    es = Elasticsearch([{'host': ES_NODES, 'port': ES_PORT}])
+    es_utils = ES_Utiles(es, LOCAL_ES_SOURCE, HDFS_OUT, HDFS_IN)
+
+    # 从es获取样本，下载到本地，并上传HDFS
+    field_id = "a9826dac7b9f4161a3c643808fb35ca7"
+    es_utils.get_and_save_es_data('common_company_field', ['bbd_qyxx_id', 'company_name'],
+                                  'field_name_list_' + field_id,
+                                  'bbd_qyxx_id', 'fieldId', field_id)
+
+    args = Test.args10
     if args['index_id']:
         cols = args['index_ids']
         cols.append(args['index_id'])
@@ -361,7 +385,7 @@ if __name__ == '__main__':
         cols = args['index_ids']
     spark = get_spark_session()
 
-    sample = Sample('5ee8105508474fd3b699407814804edb', cols, has_serire=True)
+    sample = Sample(field_id, cols, has_serire=True)
     #sample = SampleTest("/home/bbders/zhaoyunfeng/test.pickle")
 
     analysisTask = AnalysisTask(args)
