@@ -18,7 +18,7 @@ class BehaviouralAnalysis:
     def correlation_analysis(df, analysis_cols, local_path, hdfs_path):
         '''行为相关性分析'''
         # 保存数据，后端画图
-        file_name = str(uuid.uuid1()) + '.pickle'
+        file_name = 'correlation_analysis_'+str(uuid.uuid1())+'.pickle'
         try:
             df[analysis_cols].fillna(0).to_pickle(file_name)
             os.system(
@@ -42,7 +42,7 @@ class BehaviouralAnalysis:
     def clustering_analysis(df, analysis_cols, local_path, hdfs_path):
         '''聚类分析'''
         # 保存数据，后端画图
-        file_name = str(uuid.uuid1()) + '.pickle'
+        file_name = 'clustering_analysis_' + str(uuid.uuid1()) + '.pickle'
         try:
             df[analysis_cols].fillna(0).to_pickle(os.path.join(local_path, file_name))
             os.system(

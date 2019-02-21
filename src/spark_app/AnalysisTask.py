@@ -7,7 +7,7 @@ from pyspark.sql import types as tp
 from pyspark.sql import Row
 from pyspark.sql import SparkSession
 
-from common import *
+from ..common import *
 
 class Sample:
 
@@ -116,7 +116,7 @@ class AnalysisTask:
                 if self.index_type == 'disperse':
                     return CalculateMethod.value_counts(grouped)
                 elif self.index_type == 'continuous':
-                    return CalculateMethod.group_describe(grouped)
+                    return CalculateMethod.group_info(grouped)
                 else:
                     return {}
 
@@ -128,7 +128,8 @@ class AnalysisTask:
                 result = map(
                     CalculateMethod.mean,
                     grouped_series)
-                return dict(zip(map(lambda t: t[0], self.dfs), result))
+                result_series = dict(zip(map(lambda t: t[0], self.dfs), result))
+                return CalculateMethod.format_dict_2(result_series)
 
             # 分布分析
             if self.analysis_type == 'distribution_analysis':
@@ -137,7 +138,7 @@ class AnalysisTask:
                 if self.index_type == 'disperse':
                     return CalculateMethod.value_counts(grouped)
                 elif self.index_type == 'continuous':
-                    return CalculateMethod.group_describe(grouped)
+                    return CalculateMethod.group_info(grouped)
                 else:
                     return {}
 
@@ -152,7 +153,7 @@ class AnalysisTask:
                     if self.index_type == 'disperse':
                         return CalculateMethod.value_counts(feature)
                     elif self.index_type == 'continuous':
-                        return CalculateMethod.describe(feature)
+                        return CalculateMethod.describe_info(feature)
                     else:
                         return {}
 
@@ -187,7 +188,8 @@ class AnalysisTask:
                     result = map(
                         CalculateMethod.mean,
                         feature_series)
-                    return dict(zip(map(lambda t: t[0], self.dfs), result))
+                    result_series = dict(zip(map(lambda t: t[0], self.dfs), result))
+                    return CalculateMethod.format_dict_2(result_series)
 
                 # 趋势预测分析
                 if self.analysis_method == 'prediction':
@@ -221,7 +223,7 @@ class AnalysisTask:
                 if self.index_type == 'disperse':
                     return CalculateMethod.value_counts(grouped)
                 elif self.index_type == 'continuous':
-                    return CalculateMethod.group_describe(grouped)
+                    return CalculateMethod.group_info(grouped)
                 else:
                     return {}
 
@@ -268,7 +270,7 @@ class Test:
         'analysis_model': 'specific_analysis',
         'analysis_type': 'distribution_analysis',
         'analysis_method': 'company_industry',
-        'index_id': 'ruanzhu_cnt',
+        'index_id': 'frgd_cxsj_avg',
         'index_ids': [],
         'index_type': 'continuous'
     }
@@ -279,13 +281,13 @@ class Test:
         'analysis_method': 'company_province',
         'index_id': 'ruanzhu_cnt',
         'index_ids': [],
-        'index_type': 'continuous'
+        'index_type': 'disperse'
     }
 
     args4 = {
         'analysis_model': 'synthesis_analysis',
-        'analysis_type': 'time_series_analysis',
-        'analysis_method': 'prediction',
+        'analysis_type': 'behavioural_analysis',
+        'analysis_method': 'total_analysis',
         'index_id': 'ruanzhu_cnt',
         'index_ids': [],
         'index_type': 'disperse'
@@ -294,8 +296,8 @@ class Test:
     args5 = {
         'analysis_model': 'synthesis_analysis',
         'analysis_type': 'distribution_analysis',
-        'analysis_method': 'company_industry',
-        'index_id': 'zhuanli_cnt',
+        'analysis_method': 'company_province',
+        'index_id': 'ns_status',
         'index_ids': [],
         'index_type': 'disperse'
     }
@@ -311,8 +313,8 @@ class Test:
 
     args7 = {
         'analysis_model': 'synthesis_analysis',
-        'analysis_type': 'time_series_analysis',
-        'analysis_method': 'correlation',
+        'analysis_type': 'behavioural_analysis',
+        'analysis_method': 'clustering_analysis',
         'index_id': None,
         'index_ids': ['ruanzhu_cnt', 'zhuanli_cnt'],
         'index_type': []
@@ -321,9 +323,27 @@ class Test:
     args8 = {
         'analysis_model': 'synthesis_analysis',
         'analysis_type': 'time_series_analysis',
-        'analysis_method': 'history',
-        'index_id': 'punish_type',
+        'analysis_method': 'correlation',
+        'index_id': 'ruanzhu_cnt',
         'index_ids': ['ruanzhu_cnt', 'zhuanli_cnt'],
+        'index_type': []
+    }
+
+    args9 = {
+        'analysis_model': 'synthesis_analysis',
+        'analysis_type': 'time_series_analysis',
+        'analysis_method': 'history',
+        'index_id': 'ruanzhu_cnt',
+        'index_ids': ['ruanzhu_cnt', 'zhuanli_cnt'],
+        'index_type': []
+    }
+
+    args10 = {
+        'analysis_model': 'synthesis_analysis',
+        'analysis_type': 'time_series_analysis',
+        'analysis_method': 'prediction',
+        'index_id': 'ruanzhu_cnt',
+        'index_ids': None,
         'index_type': []
     }
 
