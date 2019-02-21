@@ -20,7 +20,8 @@ class CalculateMethod:
     def describe_info(feature):
         '''原始分布描述'''
         return {
-            'y': list(filter(None, feature.fillna(0)))
+            'y': list(filter(None, feature.fillna(0))),
+            's': feature.describe().fillna(0).to_dict()
         }
 
     @staticmethod
@@ -36,7 +37,8 @@ class CalculateMethod:
         '''原始分布'''
         return {
             'x': [each_group for each_group, v in grouped],
-            'y': [list((filter(None, v.fillna(0).values))) for each_group, v in grouped]
+            'y': [list((filter(None, v.fillna(0).values))) for each_group, v in grouped],
+            's': [v.describe().fillna(0).to_dict() for each_group, v in grouped]
         }
 
     @staticmethod
