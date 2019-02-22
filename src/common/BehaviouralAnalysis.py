@@ -1,6 +1,6 @@
 import uuid
 import os
-
+import traceback
 
 class BehaviouralAnalysis:
 
@@ -36,6 +36,7 @@ class BehaviouralAnalysis:
             )
             return os.path.join(hdfs_path, file_name)
         except Exception as e:
+            traceback.print_exc()
             return "ERROR: " + repr(e).replace("\'", '')
 
     @staticmethod
@@ -60,4 +61,5 @@ class BehaviouralAnalysis:
             )
             return os.path.join(hdfs_path, file_name)
         except Exception as e:
-            return "ERROR: "+ str(e)
+            traceback.print_exc()
+            return "ERROR: " + repr(e).replace("\'", '')
