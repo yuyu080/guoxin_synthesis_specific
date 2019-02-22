@@ -160,9 +160,9 @@ class Synthesis:
             'resultInfo': [{
                 'remoteTaskId': each_task['task_id'],
                 'result': each_task['task_result'],
-                'status': each_task['task_status'],
-                'image_type': each_task['image_type'],
-                'result_type': each_task['result_type']
+                'remoteTaskStatus': each_task['task_status'],
+                'imageType': each_task['image_type'],
+                'resultType': each_task['result_type']
             } for each_task in result]
         }
 
@@ -378,6 +378,7 @@ def get_and_save_es_data(field_id):
     es_utils.get_and_save_es_data('common_company_field', ['bbd_qyxx_id', 'company_name'],
                                   'field_name_list_' + field_id,
                                   'bbd_qyxx_id', 'fieldId', field_id)
+
 
 class Test:
     args1 = {
