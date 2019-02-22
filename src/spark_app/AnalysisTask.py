@@ -174,8 +174,8 @@ class Synthesis:
                 analysisTask = AnalysisTask(arg)
                 result = analysisTask.get_statistical_information()
                 arg['task_result'] = result
-                # 成功
-                if result == 'no analysis type':
+                # 根据返回数据判断状态
+                if result == 'no analysis type' or 'ERROR' in result:
                     arg['task_status'] = 3
                 else:
                     arg['task_status'] = 2
