@@ -15,7 +15,7 @@ def get_task_info(addr, task_type):
         my_request.mount('http://', HTTPAdapter(max_retries=3))
         my_request.mount('https://', HTTPAdapter(max_retries=3))
         ret = my_request.get(url, headers=headers)
-        request_logger.info("获取任务："+ret.json())
+        request_logger.info("获取任务："+ret.text)
         # 获取data
         if json.loads(ret.text)['success'] and json.loads(ret.text)['data']:
             return ret
@@ -36,7 +36,7 @@ def return_task_result(addr, task_type, callback):
         request_logger.info("任务回调内容：{}".format(callback))
         # 任务回调
         ret = my_request.post(url, json=callback, headers=headers)
-        request_logger.info("任务回调结果：" + ret.json())
+        request_logger.info("任务回调结果：" + ret.text)
 
         if json.loads(ret.text)['success']:
             return ret
