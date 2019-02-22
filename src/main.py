@@ -5,7 +5,7 @@ sys.path.append(os.getcwd())
 
 import subprocess
 
-from .handler.RequestHandler import *
+from handler.RequestHandler import *
 
 def main():
     ret = get_task_info(INTF_ADDR, 'comprehensiveanalysis')
@@ -22,9 +22,9 @@ def main():
         --py-files pyfiles4spark.zip\
         ./spark_app/AnalysisTask.py {} {}
         '''.format(task_type='Synthesis',
-                   task_text=ret.text,
+                   task_text=ret.text),
         shell=True
-    ))
+    )
 
 
 
