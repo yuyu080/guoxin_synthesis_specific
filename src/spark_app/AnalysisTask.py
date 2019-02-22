@@ -14,7 +14,10 @@ from elasticsearch import Elasticsearch
 
 from handler import *
 from utils.elasticsearchUtil import ES_Utiles
+from utils.logUtil import create_logger
 from common import *
+
+request_logger = create_logger('request_logger', 'request.log')
 
 
 class Sample:
