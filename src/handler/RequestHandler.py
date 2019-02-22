@@ -4,10 +4,9 @@ from requests.adapters import HTTPAdapter
 import json
 import logging
 
-request_logger = logging.getLogger('request_logger')
-
 
 def get_task_info(addr, task_type):
+    request_logger = logging.getLogger('request_logger')
     url = addr + '/api/nationalcredit/task/compute/{}'.format(task_type)
     headers = {'content-type': 'application/json'}
     try:
@@ -27,6 +26,7 @@ def get_task_info(addr, task_type):
 
 
 def return_task_result(addr, task_type, callback):
+    request_logger = logging.getLogger('request_logger')
     url = addr + '/api/nationalcredit/task/callback/{}'.format(task_type)
     headers = {'content-type': 'application/json'}
     try:
