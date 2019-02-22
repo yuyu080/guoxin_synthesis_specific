@@ -22,7 +22,7 @@ def get_task_info(addr, task_type):
         else:
             return ''
     except:
-        request_logger.error("获取任务失败")
+        request_logger.error("获取任务失败：", exc_info=True)
         return ''
 
 
@@ -43,7 +43,7 @@ def return_task_result(addr, task_type, callback):
         else:
             return ''
     except:
-        request_logger.error("任务回调失败")
+        request_logger.error("任务回调失败", exc_info=True)
         return ''
 
 
