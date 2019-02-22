@@ -257,9 +257,9 @@ class AnalysisTask:
                 if self.analysis_method == 'correlation_analysis':
                     path = BehaviouralAnalysis.correlation_analysis(
                         self.df,
+                        self.index_ids,
                         self.local_path,
-                        self.hdfs_path,
-                        self.index_ids
+                        self.hdfs_path
                     )
                     return path
 
@@ -267,9 +267,9 @@ class AnalysisTask:
                 if self.analysis_method == 'clustering_analysis':
                     path = BehaviouralAnalysis.correlation_analysis(
                         self.df,
+                        self.index_ids,
                         self.local_path,
-                        self.hdfs_path,
-                        self.index_ids
+                        self.hdfs_path
                     )
                     return path
 
