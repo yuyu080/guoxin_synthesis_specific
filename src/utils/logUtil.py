@@ -1,13 +1,13 @@
 import os
 import logging
-
+from logging.handlers import RotatingFileHandler
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOG_DIR = BASE_DIR + '/logs/'
 
 
 def create_logger(logger_name, file_name):
-    fh = logging.handlers.RotatingFileHandler(LOG_DIR+file_name,
+    fh = RotatingFileHandler(LOG_DIR+file_name,
                                               encoding='utf-8', mode='a+',
                                               maxBytes=1024 * 1024, backupCount=40)
     logger = logging.getLogger(logger_name) #获得一个logger对象，默认是root
