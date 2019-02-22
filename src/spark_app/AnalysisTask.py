@@ -1,6 +1,7 @@
 import os
 import sys
 import argparse
+import traceback
 
 import pandas as pd
 from pyspark.conf import SparkConf
@@ -179,6 +180,7 @@ class Synthesis:
                     arg['task_status'] = 2
 
             except Exception as e:
+                traceback.print_exc()
                 arg['task_result'] = repr(e).replace("\'", '')
                 # 失败
                 arg['task_status'] = 3

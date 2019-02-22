@@ -20,7 +20,7 @@ class BehaviouralAnalysis:
         # 保存数据，后端画图
         file_name = 'correlation_analysis_'+str(uuid.uuid1())+'.pickle'
         try:
-            df[analysis_cols].fillna(0).to_pickle(file_name)
+            df[analysis_cols].fillna(0).to_pickle(os.path.join(local_path, file_name))
             os.system(
                 '''
                 hadoop fs -put {} {}
@@ -36,7 +36,7 @@ class BehaviouralAnalysis:
             )
             return os.path.join(hdfs_path, file_name)
         except Exception as e:
-            return "ERROR: " + str(e)
+            return "ERROR: " + repr(e).replace("\'", '')
 
     @staticmethod
     def clustering_analysis(df, analysis_cols, local_path, hdfs_path):
