@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 import traceback
+import logging
 
 import pandas as pd
 from pyspark.conf import SparkConf
@@ -478,6 +479,9 @@ if __name__ == '__main__':
     HDFS_OUT = '/user/bbders/zhaoyunfeng/guoxing_out/'
     LOCAL_ES_SOURCE = '{}/es_data/'.format(LOCAL_PATH)
 
+    # 任务获取地址
+    INTF_ADDR = 'http://10.28.103.21:8899'
+
     # 基础指标库
     INDEX_TABLE = 'guoxin.test'
     # 指标映射表
@@ -520,7 +524,8 @@ if __name__ == '__main__':
 
         print(callback)
 
-
+        # 4、结果回调
+        return_task_result(INTF_ADDR, 'comprehensiveanalysis', callback)
 
 
     # args = Test.args10
