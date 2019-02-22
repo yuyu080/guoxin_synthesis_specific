@@ -2,13 +2,16 @@ import datetime
 import os
 import sys
 sys.path.append(os.getcwd())
-
 import subprocess
 
 from handler.RequestHandler import *
+from utils.logUtil import create_logger
+
+request_logger = create_logger('request_logger', 'request.log')
 
 def main():
     ret = get_task_info(INTF_ADDR, 'comprehensiveanalysis')
+    request_logger.info(ret.json())
     # 打包spark依赖
     os.system("rm ./pyfiles4spark.zip; zip -r ./pyfiles4spark.zip .")
 
