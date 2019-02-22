@@ -238,6 +238,7 @@ class AnalysisTask:
                 else:
                     return {}
 
+            return 'no analysis type'
 
         elif self.analysis_model == 'synthesis_analysis':
 
@@ -322,6 +323,8 @@ class AnalysisTask:
                     return CalculateMethod.group_info(grouped)
                 else:
                     return {}
+
+            return 'no analysis type'
 
         else:
             return {}

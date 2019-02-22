@@ -9,6 +9,7 @@ from handler.RequestHandler import *
 
 def main():
     ret = get_task_info(INTF_ADDR, 'comprehensiveanalysis')
+    # 打包spark依赖
     os.system("rm ./pyfiles4spark.zip; zip -r ./pyfiles4spark.zip .")
 
     execute_result = subprocess.call(
