@@ -22,7 +22,7 @@ def get_task_info(addr, task_type):
 
 
 def return_task_result(addr, task_type, callback):
-    url = addr + '/api/nationalcredit/callback/compute/{}'.format(task_type)
+    url = addr + '/api/nationalcredit/task/callback/{}'.format(task_type)
     headers = {'content-type': 'application/json'}
     try:
         my_request = requests.Session()
