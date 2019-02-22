@@ -19,8 +19,10 @@ def main():
         --driver-memory 5g \
         --driver-cores 4 \
         --queue users.bbders \
-        --py-files pyfiles4spark.zip\
-        ./spark_app/AnalysisTask.py {task_type} {task_text}
+        --py-files pyfiles4spark.zip \
+        ./spark_app/AnalysisTask.py \
+        --task_type {task_type} \
+        --task_text {task_text}
         '''.format(task_type='Synthesis',
                    task_text=ret.text),
         shell=True

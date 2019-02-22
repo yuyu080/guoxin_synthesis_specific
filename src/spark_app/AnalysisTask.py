@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 
 import pandas as pd
 from pyspark.conf import SparkConf
@@ -395,26 +396,36 @@ if __name__ == '__main__':
     ES_PORT = '39200'
 
     # 接受到的任务参数
-    task_type = sys.argv[1]
-    task_text = sys.argv[2]
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-task_type", help="任务类型")
+    parser.add_argument(
+        "-task_text", help="任务参数")
+    args = parser.parse_args()
 
+    task_type = args.task_type
+    task_text = args.task_text
 
-    # 获取指标元数据
-    col_mapping = get_col_continuity()
-
-    if task_type == 'Synthesis':
-        tasks_info = Synthesis.get_synthesis_args_obj(task_text, col_mapping)
-        field_id = tasks_info['field_id']
-        cols = tasks_info['cols']
-
-        # 1、从ES下载样本文件并上传HDFS
-        get_and_save_es_data(field_id)
-        # 2、获得样本spark DATAFRAME
-        sample = Sample(field_id, cols, has_serire=True)
-        # 3、执行
-        callback = Synthesis.execut_task(tasks_info['tasks'], tasks_info['total_task_id'])
-
-        print(callback)
+    print(task_text)
+    # # spark-session
+    # spark = get_spark_session()
+    #
+    # # 获取指标元数据
+    # col_mapping = get_col_continuity(INDEX_MAPPING_TABLE)
+    #
+    # if task_type == 'Synthesis':
+    #     tasks_info = Synthesis.get_synthesis_args_obj(task_text, col_mapping)
+    #     field_id = tasks_info['field_id']
+    #     cols = tasks_info['cols']
+    #
+    #     # 1、从ES下载样本文件并上传HDFS
+    #     get_and_save_es_data(field_id)
+    #     # 2、获得样本spark DATAFRAME
+    #     sample = Sample(field_id, cols, has_serire=True)
+    #     # 3、执行
+    #     callback = Synthesis.execut_task(tasks_info['tasks'], tasks_info['total_task_id'])
+    #
+    #     print(callback)
 
 
 
