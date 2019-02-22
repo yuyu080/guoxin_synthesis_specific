@@ -1,4 +1,5 @@
 import os
+import sys
 
 import pandas as pd
 from pyspark.conf import SparkConf
@@ -8,6 +9,7 @@ from pyspark.sql import Row
 from pyspark.sql import SparkSession
 from elasticsearch import Elasticsearch
 
+from handler import *
 from utils.elasticsearchUtil import ES_Utiles
 from common import *
 
@@ -83,7 +85,7 @@ class Sample:
             *Sample.check_col_exist(index_cols, index_df.columns)
         )
 
-        return tid_df.toPandas()
+        return tid_df.toPandas().fillna(0).fillna('-')
 
     def get_pandas_dfs(field_id, index_cols, table_dt):
         pass
@@ -206,7 +208,7 @@ class AnalysisTask:
                     return TimeSeriesAnalysis.prediction_analysis(now_series)
 
                 # 时序相关性分析
-                if self.analysis_method == 'correlation':
+                if self.analysis_method == 'correlation_analysis':
                     time_series = []
                     for each_index in self.index_ids:
                         feature_series = TimeSeriesAnalysis.total_analysis(
@@ -233,6 +235,7 @@ class AnalysisTask:
         else:
             return {}
 
+
 def get_spark_session():
     conf = SparkConf()
     conf.setMaster('yarn-client')
@@ -258,8 +261,28 @@ def get_spark_session():
 
     return spark
 
-def es_to_hdfs(filed_id):
 
+def get_col_continuity(mapping_table):
+    # 获取指标类型
+    mapping = spark.sql("select * from {}".format(mapping_table))
+    data = mapping.select(
+        'index',
+        fun.when(
+            mapping.continuity == '离散', 'disperse'
+        ).when(
+            mapping.continuity == '连续', 'continuous'
+        ).alias('continuity')
+    ).collect()
+    return {row.asDict()['index']: row.asDict()['continuity'] for row in data}
+
+
+def get_and_save_es_data(field_id):
+    '''从es获取样本，下载到本地，并上传HDFS'''
+    es = Elasticsearch([{'host': ES_NODES, 'port': ES_PORT}])
+    es_utils = ES_Utiles(es, LOCAL_ES_SOURCE, HDFS_OUT, HDFS_IN)
+    es_utils.get_and_save_es_data('common_company_field', ['bbd_qyxx_id', 'company_name'],
+                                  'field_name_list_' + field_id,
+                                  'bbd_qyxx_id', 'fieldId', field_id)
 
 class Test:
     args1 = {
@@ -363,31 +386,50 @@ if __name__ == '__main__':
 
     # 基础指标库
     INDEX_TABLE = 'guoxin.test'
+    # 指标映射表
+    INDEX_MAPPING_TABLE = 'guoxin.continuity'
 
     # es连接信息配置
     ES_NODES = '10.28.103.20'
     CLUSTERS_NAME = 'test-opslog'
     ES_PORT = '39200'
-    es = Elasticsearch([{'host': ES_NODES, 'port': ES_PORT}])
-    es_utils = ES_Utiles(es, LOCAL_ES_SOURCE, HDFS_OUT, HDFS_IN)
 
-    # 从es获取样本，下载到本地，并上传HDFS
-    field_id = "a9826dac7b9f4161a3c643808fb35ca7"
-    es_utils.get_and_save_es_data('common_company_field', ['bbd_qyxx_id', 'company_name'],
-                                  'field_name_list_' + field_id,
-                                  'bbd_qyxx_id', 'fieldId', field_id)
+    # 接受到的任务参数
+    task_type = sys.argv[1]
+    task_text = sys.argv[2]
 
-    args = Test.args10
-    if args['index_id']:
-        cols = args['index_ids']
-        cols.append(args['index_id'])
-    else:
-        cols = args['index_ids']
-    spark = get_spark_session()
 
-    sample = Sample(field_id, cols, has_serire=True)
-    #sample = SampleTest("/home/bbders/zhaoyunfeng/test.pickle")
+    # 获取指标元数据
+    col_mapping = get_col_continuity()
 
-    analysisTask = AnalysisTask(args)
-    result = analysisTask.get_statistical_information()
-    print(result)
+    if task_type == 'Synthesis':
+        tasks_info = Synthesis.get_synthesis_args_obj(task_text, col_mapping)
+        field_id = tasks_info['field_id']
+        cols = tasks_info['cols']
+
+        # 1、从ES下载样本文件并上传HDFS
+        get_and_save_es_data(field_id)
+        # 2、获得样本spark DATAFRAME
+        sample = Sample(field_id, cols, has_serire=True)
+        # 3、执行
+        callback = Synthesis.execut_task(tasks_info['tasks'], tasks_info['total_task_id'])
+
+        print(callback)
+
+
+
+
+    # args = Test.args10
+    # if args['index_id']:
+    #     cols = args['index_ids']
+    #     cols.append(args['index_id'])
+    # else:
+    #     cols = args['index_ids']
+    # spark = get_spark_session()
+    #
+    # sample = Sample(field_id, cols, has_serire=True)
+    # #sample = SampleTest("/home/bbders/zhaoyunfeng/test.pickle")
+    #
+    # analysisTask = AnalysisTask(args)
+    # result = analysisTask.get_statistical_information()
+    # print(result)
