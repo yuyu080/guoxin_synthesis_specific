@@ -1,5 +1,8 @@
 import datetime
 import os
+import sys
+sys.path.append(os.getcwd())
+
 import subprocess
 
 from .handler.RequestHandler import *
