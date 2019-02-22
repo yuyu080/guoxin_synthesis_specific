@@ -7,7 +7,9 @@ import subprocess
 from handler.RequestHandler import *
 from utils.logUtil import create_logger
 
-request_logger = create_logger('request_logger', 'request.log')
+
+request_logger = create_logger(logger_name='request_logger', file_name='request.log')
+
 
 def main():
     ret = get_task_info(INTF_ADDR, 'comprehensiveanalysis')

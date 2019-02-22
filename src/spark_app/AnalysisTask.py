@@ -17,7 +17,11 @@ from utils.elasticsearchUtil import ES_Utiles
 from utils.logUtil import create_logger
 from common import *
 
-request_logger = create_logger('request_logger', 'request.log')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+LOG_DIR = BASE_DIR + '/logs/'
+request_logger = create_logger(log_dir=LOG_DIR,
+                               logger_name='request_logger',
+                               file_name='request.log')
 
 
 class Sample:
