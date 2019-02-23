@@ -20,7 +20,9 @@ class CalculateMethod:
     def describe_info(feature):
         '''原始分布描述'''
         return {
-            'y': list(filter(None, feature.fillna(0))),
+            'y': [{
+                    'data': list(filter(None, feature.fillna(0)))
+                    }],
             's': feature.describe().fillna(0).to_dict()
         }
 
@@ -37,7 +39,9 @@ class CalculateMethod:
         '''原始分布'''
         return {
             'x': [each_group for each_group, v in grouped],
-            'y': [list((filter(None, v.fillna(0).values))) for each_group, v in grouped],
+            'y': [{
+                    'data': list((filter(None, v.fillna(0).values)))
+                  } for each_group, v in grouped],
             's': [v.describe().fillna(0).to_dict() for each_group, v in grouped]
         }
 
@@ -74,9 +78,11 @@ class CalculateMethod:
         except:
             return {
                 'x': [k for k, v in result.items()],
-                'y': {
-                    'data': [v for k, v in result.items()]
-                }
+                'y': [
+                    {
+                        'data': [v for k, v in result.items()]
+                    }
+                ]
             }
 
     def format_dict_2(result):
