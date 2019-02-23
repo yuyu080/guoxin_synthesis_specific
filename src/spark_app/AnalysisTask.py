@@ -610,7 +610,7 @@ if __name__ == '__main__':
         if task_type == 'Synthesis':
             tasks_info = Synthesis.get_synthesis_args_obj(task_text, col_mapping)
         elif task_type == 'Specific':
-            tasks_info = Specific.get_synthesis_args_obj(task_text, col_mapping)
+            tasks_info = Specific.get_specific_args_obj(task_text, col_mapping)
         field_id = tasks_info['field_id']
         cols = tasks_info['cols']
         task_logger.info("任务参数解析成功：{}".format(json.dumps(tasks_info, indent=4)))
