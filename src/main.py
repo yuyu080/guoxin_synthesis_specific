@@ -6,6 +6,7 @@ import subprocess
 from random import choice
 from time import sleep
 from concurrent.futures import  ProcessPoolExecutor
+import copy
 
 from handler.RequestHandler import *
 from utils.logUtil import create_logger
@@ -42,9 +43,11 @@ def submit_task(api_task_type, spark_task_type):
 def main():
     executor = ProcessPoolExecutor(max_workers=MAX_WORKERS)
     while True:
+
         api_task_type, spark_task_type = choice(TASK_TYPE)
-        submit_task(api_task_type, spark_task_type)
-        sleep(3)
+        executor.submit(submit_task, api_task_type, spark_task_type)
+
+        sleep(10)
 
 
 
@@ -55,6 +58,7 @@ if __name__ == '__main__':
                 ('comprehensiveanalysis', 'Synthesis')]
     # 同时执行的计算
     MAX_WORKERS = 3
+    FREE_WORKER = copy.deepcopy(MAX_WORKERS)
 
     main()
 

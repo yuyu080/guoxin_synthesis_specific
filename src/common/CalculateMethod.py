@@ -74,7 +74,9 @@ class CalculateMethod:
         except:
             return {
                 'x': [k for k, v in result.items()],
-                'y': [v for k, v in result.items()]
+                'y': {
+                    'data': [v for k, v in result.items()]
+                }
             }
 
     def format_dict_2(result):
@@ -96,6 +98,8 @@ class CalculateMethod:
         except:
             return {
                 'x': [k for k, v in result.items()],
-                'y': [v for k, v in result.items()]
+                'y': {
+                    'data': [v for k, v in result.items()]
+                }
             }
 
