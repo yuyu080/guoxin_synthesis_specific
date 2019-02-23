@@ -3,6 +3,7 @@ import sys
 import argparse
 import traceback
 import logging
+import json
 
 import pandas as pd
 from pyspark.conf import SparkConf
@@ -22,7 +23,9 @@ LOG_DIR = BASE_DIR + '/logs/'
 request_logger = create_logger(log_dir=LOG_DIR,
                                logger_name='request_logger',
                                file_name='request.log')
-
+task_logger = create_logger(log_dir=LOG_DIR,
+                               logger_name='task_logger',
+                               file_name='task.log')
 
 class Sample:
 
@@ -188,6 +191,7 @@ class Synthesis:
                     arg['task_status'] = 2
 
             except Exception as e:
+                task_logger.error("子任务失败: {}".format(arg['task_id']), exc_info=True)
                 traceback.print_exc()
                 arg['task_result'] = repr(e).replace("\'", '')
                 # 失败
@@ -519,14 +523,24 @@ if __name__ == '__main__':
     col_mapping = get_col_continuity(INDEX_MAPPING_TABLE)
 
     if task_type == 'Synthesis':
-        tasks_info = Synthesis.get_synthesis_args_obj(task_text, col_mapping)
-        field_id = tasks_info['field_id']
-        cols = tasks_info['cols']
+        try:
+            tasks_info = Synthesis.get_synthesis_args_obj(task_text, col_mapping)
+            field_id = tasks_info['field_id']
+            cols = tasks_info['cols']
+            task_logger.info("任务参数解析成功：{}".format(json.dumps(tasks_info, indent=4)))
+        except Exception as e:
+            task_logger.error("任务参数解析失败：{}".format(task_text), exc_info=True)
+
 
         # 1、从ES下载样本文件并上传HDFS
         get_and_save_es_data(field_id)
         # 2、获得样本spark DATAFRAME
-        sample = Sample(field_id, cols, has_serire=True)
+        try:
+            sample = Sample(field_id, cols, has_serire=True)
+            task_logger.info("获取样本+指标成功：field_id={}".format(field_id))
+        except Exception as e:
+            task_logger.error("获取样本+指标失败：field_id={}".format(field_id), exc_info=True)
+
         # 3、执行
         callback = Synthesis.execut_task(tasks_info['tasks'], tasks_info['total_task_id'])
 

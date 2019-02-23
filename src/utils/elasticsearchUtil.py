@@ -1,7 +1,9 @@
 # -*- encoding = utf-8 -*-
 import os
 import traceback
+import logging
 
+task_logger = logging.getLogger('task_logger')
 
 class ES_Utiles:
 
@@ -42,6 +44,7 @@ class ES_Utiles:
             return rs
         except Exception as e:
             # raise Exception("{0} search error".format(index_)+"------errorMsg------"+repr(e))
+            task_logger.error("{0} search error".format(index_), exc_info=True)
             self.print_error("{0} search error".format(index_) + "------errorMsg------", e)
 
     def _first_query(self,index_, _source, order_field):
@@ -66,6 +69,7 @@ class ES_Utiles:
             return rs
         except Exception as e:
             # raise Exception("{0} search error".format(index_)+"------errorMsg------"+repr(e))
+            task_logger.error("{0} search error".format(index_), exc_info=True)
             self.print_error("{0} search error".format(index_) + "------errorMsg------", e)
 
     def _get_first_data(self,first_rs, _source, file_name, order_field):
@@ -117,6 +121,7 @@ class ES_Utiles:
             return rs
         except Exception as e:
             # raise Exception("{0} search error".format(index_) + "------errorMsg------" + repr(e))
+            task_logger.error("{0} search error".format(index_), exc_info=True)
             self.print_error("{0} search error".format(index_) + "------errorMsg------", e)
 
 
@@ -149,6 +154,7 @@ class ES_Utiles:
             return rs
         except Exception as e:
             # raise Exception("{0} search error".format(index_) + "------errorMsg------" + repr(e))
+            task_logger.error("{0} search error".format(index_), exc_info=True)
             self.print_error("{0} search error".format(index_) + "------errorMsg------", e)
 
     # taskId为“null”时获取全部es数据，不为空时获取指定任务的数据
@@ -159,6 +165,8 @@ class ES_Utiles:
             os.system("rm {path}".format(path=self.LOCAL_ES_SOURCE + '{name}'.format(name=file_name)))
             os.system("hdfs dfs -rm {path}".format(path=self.GUOXING_IN + '{name}'.format(name=file_name)))
         print("get es data {name}...".format(name=index_))
+        task_logger.info("开始获取样本：index={}, source={}, search_item={}, itemCode={}".format(index_, _source,
+                                                                                          search_item, itemCode))
         try:
             if itemCode != "":
                 first_rs = self._first_query_by_fieldCode(index_, _source, order_field, search_item, itemCode)
@@ -183,9 +191,12 @@ class ES_Utiles:
                 retry_times = retry_times + 1
                 self.get_and_save_es_data(index_, _source, file_name, order_field, search_item, itemCode, retry_times)
             else:
+                task_logger.error("{0} search error".format(index_), exc_info=True)
                 self.print_error("{0} search error".format(index_), e)
                 # raise Exception("{0} search error".format(index_))
         print("get es data {name} done!".format(name=index_))
+        task_logger.info("获取样本成功：index={}, source={}, search_item={}, itemCode={}".format(index_, _source,
+                                                                                          search_item, itemCode))
         os.system("hdfs dfs -rmr {path}".format(path=self.GUOXING_OUT + '{name}'.format(name=file_name)))
         os.system("hdfs dfs -put {path1} {path2}".format(path1=self.LOCAL_ES_SOURCE + '{name}'.format(name=file_name),
                                                          path2=self.GUOXING_OUT))

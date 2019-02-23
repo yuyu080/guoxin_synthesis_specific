@@ -1,6 +1,10 @@
 import uuid
 import os
 import traceback
+import logging
+
+task_logger = logging.getLogger('task_logger')
+
 
 class BehaviouralAnalysis:
 
@@ -36,6 +40,7 @@ class BehaviouralAnalysis:
             )
             return os.path.join(hdfs_path, file_name)
         except Exception as e:
+            task_logger.error("子任务失败", exc_info=True)
             traceback.print_exc()
             return "ERROR: " + repr(e).replace("\'", '')
 
@@ -61,5 +66,6 @@ class BehaviouralAnalysis:
             )
             return os.path.join(hdfs_path, file_name)
         except Exception as e:
+            task_logger.error("子任务失败", exc_info=True)
             traceback.print_exc()
             return "ERROR: " + repr(e).replace("\'", '')
