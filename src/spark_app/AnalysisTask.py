@@ -129,7 +129,8 @@ class Synthesis:
         'CORRELATION': 'correlation_analysis',
         'REGION': 'company_county',
         'INDUSTRY': 'company_industry',
-        'COMPANY_TYPE': 'company_type'
+        'COMPANY_TYPE': 'company_type',
+        'AGE_LIMIT': 'openfrom'
     }
     analysis_method_reverse = {v: k for k, v in analysis_method.items()}
 
@@ -218,7 +219,8 @@ class Specific:
         'CORRELATION': 'correlation_analysis',
         'REGION': 'company_county',
         'INDUSTRY': 'company_industry',
-        'COMPANY_TYPE': 'company_type'
+        'COMPANY_TYPE': 'company_type',
+        'AGE_LIMIT': 'openfrom'
     }
     analysis_method_reverse = {v: k for k, v in analysis_method.items()}
 
