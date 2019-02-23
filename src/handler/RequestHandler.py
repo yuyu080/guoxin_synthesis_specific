@@ -34,7 +34,8 @@ def return_task_result(addr, task_type, callback):
         my_request.mount('https://', HTTPAdapter(max_retries=3))
         request_logger.info("任务回调内容：{}".format(callback))
         # 任务回调
-        ret = my_request.post(url, json=callback, headers=headers)
+        callback = json.dumps(callback)
+        ret = my_request.post(url, data=callback, headers=headers)
         request_logger.info("任务回调结果：" + ret.text)
 
         if json.loads(ret.text)['success']:
