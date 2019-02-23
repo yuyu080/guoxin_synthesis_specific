@@ -157,7 +157,7 @@ class Synthesis:
             tasks.append(arg)
 
         return {
-            'tasks': tasks, 'field_id': field_id, 'cols': cols, 'total_task_id': obj['data']['taskId']
+            'tasks': tasks, 'field_id': field_id, 'cols': list(set(cols)), 'total_task_id': obj['data']['taskId']
         }
 
     @staticmethod
@@ -193,10 +193,93 @@ class Synthesis:
             except Exception as e:
                 task_logger.error("子任务失败: {}".format(arg['task_id']), exc_info=True)
                 traceback.print_exc()
-                arg['task_result'] = repr(e).replace("\'", '')
+                arg['task_result'] = "ERROR: " + repr(e).replace("\'", '')
                 # 失败
                 arg['task_status'] = 3
         return Synthesis.format_synthesis_obj(tasks, total_task_id)
+
+
+class Specific:
+    # 分析类型字典
+    analysis_type = {
+        'BEHAVIOR': 'behavioural_analysis',
+        'TIME': 'time_series_analysis',
+        'DISTRIBUTION': 'distribution_analysis'
+    }
+    analysis_type_reverse = {v: k for k, v in analysis_type.items()}
+
+    # 分析方法字典
+    analysis_method = {
+        'FEATURE': 'total_analysis',
+        'CORRELATION': 'correlation_analysis',
+        'CLUSTERING': 'clustering_analysis',
+        'TREND_HISTORY': 'history',
+        'TREND_PREDICTION': 'prediction',
+        'CORRELATION': 'correlation_analysis',
+        'REGION': 'company_county',
+        'INDUSTRY': 'company_industry',
+        'COMPANY_TYPE': 'company_type'
+    }
+    analysis_method_reverse = {v: k for k, v in analysis_method.items()}
+
+    @staticmethod
+    def get_specific_args_obj(input_args, col_mapping):
+        '''构造专题分析参数'''
+        obj = json.loads(input_args)
+        field_id = 'fab12e42ee594c8c8ae4652a61c958ab'
+        tasks = []
+        cols = []
+        for each_task in obj['data']['taskModel']['ruleList']:
+            # 构造计算参数
+            arg = {
+                'analysis_model': 'specific_analysis',
+                'analysis_type': Specific.analysis_type[each_task['analyseType']],
+                'analysis_method': Specific.analysis_method[each_task['ordinate']],
+                'index_id': each_task['indexCode'],
+                'index_ids': [],
+                'index_type': col_mapping.get(each_task['indexCode'], ''),
+                'task_id': each_task['calcRuleUid']
+            }
+            cols.append(each_task['indexCode'])
+            tasks.append(arg)
+
+        return {
+            'tasks': tasks, 'field_id': field_id, 'cols': list(set(cols)), 'total_task_id': obj['data']['taskId']
+        }
+
+    @staticmethod
+    def format_specific_obj(result, total_task_id):
+        '''构造综合分析响应参数'''
+        return {
+            'taskId': total_task_id,
+            'resultPath': '',
+            'taskStatus': 3 if 3 in [each_task['task_status'] for each_task in result] else 2,
+            'resultInfo': [{
+                'remoteTaskId': each_task['task_id'],
+                'result': each_task['task_result'],
+                'remoteTaskStatus': each_task['task_status']
+            } for each_task in result]
+        }
+
+    @staticmethod
+    def execut_task(tasks, total_task_id):
+        '''执行task'''
+        for arg in tasks:
+            try:
+                analysisTask = AnalysisTask(arg)
+                result = analysisTask.get_statistical_information()
+                arg['task_result'] = result
+                # 根据返回数据判断状态
+                if result == 'no analysis type' or 'ERROR' in result:
+                    arg['task_status'] = 3
+                else:
+                    arg['task_status'] = 2
+            except Exception as e:
+                traceback.print_exc()
+                arg['task_result'] = "ERROR: " + repr(e).replace("\'", '')
+                # 失败
+                arg['task_status'] = 3
+        return Specific.format_specific_obj(tasks, total_task_id)
 
 
 class AnalysisTask:
@@ -522,32 +605,40 @@ if __name__ == '__main__':
     # 获取指标元数据
     col_mapping = get_col_continuity(INDEX_MAPPING_TABLE)
 
-    if task_type == 'Synthesis':
-        try:
+    # 0、
+    try:
+        if task_type == 'Synthesis':
             tasks_info = Synthesis.get_synthesis_args_obj(task_text, col_mapping)
-            field_id = tasks_info['field_id']
-            cols = tasks_info['cols']
-            task_logger.info("任务参数解析成功：{}".format(json.dumps(tasks_info, indent=4)))
-        except Exception as e:
-            task_logger.error("任务参数解析失败：{}".format(task_text), exc_info=True)
+        elif task_type == 'Specific':
+            tasks_info = Specific.get_synthesis_args_obj(task_text, col_mapping)
+        field_id = tasks_info['field_id']
+        cols = tasks_info['cols']
+        task_logger.info("任务参数解析成功：{}".format(json.dumps(tasks_info, indent=4)))
+    except Exception as e:
+        task_logger.error("任务参数解析失败：{}".format(task_text), exc_info=True)
 
 
-        # 1、从ES下载样本文件并上传HDFS
-        get_and_save_es_data(field_id)
-        # 2、获得样本spark DATAFRAME
-        try:
-            sample = Sample(field_id, cols, has_serire=True)
-            task_logger.info("获取样本+指标成功：field_id={}".format(field_id))
-        except Exception as e:
-            task_logger.error("获取样本+指标失败：field_id={}".format(field_id), exc_info=True)
+    # 1、从ES下载样本文件并上传HDFS
+    get_and_save_es_data(field_id)
+    # 2、获得样本spark DATAFRAME
+    try:
+        sample = Sample(field_id, cols, has_serire=True)
+        task_logger.info("获取样本+指标成功：field_id={}".format(field_id))
+    except Exception as e:
+        task_logger.error("获取样本+指标失败：field_id={}".format(field_id), exc_info=True)
 
-        # 3、执行
+    # 3、执行,回调
+    if task_type == 'Synthesis':
         callback = Synthesis.execut_task(tasks_info['tasks'], tasks_info['total_task_id'])
-
-        print(callback)
-
-        # 4、结果回调
         return_task_result(INTF_ADDR, 'comprehensiveanalysis', callback)
+    elif task_type == 'Specific':
+        callback = Specific.execut_task(tasks_info['tasks'], tasks_info['total_task_id'])
+        return_task_result(INTF_ADDR, 'specificanalysis', callback)
+
+    # 4、结果
+    print(callback)
+
+
 
 
     # args = Test.args10

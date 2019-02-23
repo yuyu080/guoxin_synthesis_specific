@@ -12,7 +12,7 @@ request_logger = create_logger(logger_name='request_logger', file_name='request.
 
 
 def main():
-    ret = get_task_info(INTF_ADDR, 'comprehensiveanalysis')
+    ret = get_task_info(INTF_ADDR, 'specificanalysis')
     # 打包spark依赖
     os.system("rm ./pyfiles4spark.zip; zip -r ./pyfiles4spark.zip .")
 
