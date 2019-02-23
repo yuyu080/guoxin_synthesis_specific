@@ -228,7 +228,7 @@ class Specific:
     def get_specific_args_obj(input_args, col_mapping):
         '''构造专题分析参数'''
         obj = json.loads(input_args)
-        field_id = 'fab12e42ee594c8c8ae4652a61c958ab'
+        field_id = obj['data']['taskModel']['fieldId']
         tasks = []
         cols = []
         for each_task in obj['data']['taskModel']['ruleList']:
