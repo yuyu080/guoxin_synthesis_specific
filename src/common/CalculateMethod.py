@@ -98,8 +98,11 @@ class CalculateMethod:
         except:
             return {
                 'x': [k for k, v in result.items()],
-                'y': {
-                    'data': [v for k, v in result.items()]
-                }
+                'y': [
+                    {
+                        'data': [v for k, v in result.items()]
+                    }
+                ]
+
             }
 
