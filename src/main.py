@@ -28,7 +28,7 @@ def main():
         ./spark_app/AnalysisTask.py \
         -task_type '{task_type}' \
         -task_text '{task_text}'
-        '''.format(task_type='Synthesis',
+        '''.format(task_type='Specific',
                    task_text=ret.text),
         shell=True
     )
