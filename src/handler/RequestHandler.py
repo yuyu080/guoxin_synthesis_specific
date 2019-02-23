@@ -3,8 +3,21 @@ import requests
 from requests.adapters import HTTPAdapter
 import json
 import logging
+import numpy
 
 request_logger = logging.getLogger('request_logger')
+
+class MyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, numpy.integer):
+            return int(obj)
+        elif isinstance(obj, numpy.floating):
+            return float(obj)
+        elif isinstance(obj, numpy.ndarray):
+            return obj.tolist()
+        else:
+            return super(MyEncoder, self).default(obj)
+
 
 def get_task_info(addr, task_type):
     url = addr + '/api/nationalcredit/task/compute/{}'.format(task_type)
@@ -34,7 +47,7 @@ def return_task_result(addr, task_type, callback):
         my_request.mount('https://', HTTPAdapter(max_retries=3))
         request_logger.info("任务回调内容：{}".format(callback))
         # 任务回调
-        callback = json.dumps(callback)
+        callback = json.dumps(callback, cls=MyEncoder)
         ret = my_request.post(url, data=callback, headers=headers)
         request_logger.info("任务回调结果：" + ret.text)
 
