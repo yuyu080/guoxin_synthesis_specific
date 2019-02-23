@@ -445,7 +445,6 @@ def get_spark_session():
 
     spark = SparkSession \
         .builder \
-        .appName("zhaoyunfeng") \
         .config(conf=conf) \
         .enableHiveSupport() \
         .getOrCreate()
