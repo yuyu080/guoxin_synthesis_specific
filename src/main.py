@@ -58,7 +58,6 @@ if __name__ == '__main__':
                 ('comprehensiveanalysis', 'Synthesis')]
     # 同时执行的计算
     MAX_WORKERS = 3
-    FREE_WORKER = copy.deepcopy(MAX_WORKERS)
 
     main()
 
