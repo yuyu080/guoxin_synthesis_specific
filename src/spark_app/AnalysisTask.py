@@ -255,7 +255,7 @@ class Specific:
         return {
             'taskId': total_task_id,
             'resultPath': '',
-            'taskStatus': 3 if 3 in [each_task['task_status'] for each_task in result] else 2,
+            'taskStatus': 2 if 2 in [each_task['task_status'] for each_task in result] else 3,
             'resultInfo': [{
                 'remoteTaskId': each_task['task_id'],
                 'result': each_task['task_result'],
