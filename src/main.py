@@ -47,7 +47,7 @@ def main():
         api_task_type, spark_task_type = choice(TASK_TYPE)
         executor.submit(submit_task, api_task_type, spark_task_type)
 
-        sleep(10)
+        sleep(5)
 
 
 

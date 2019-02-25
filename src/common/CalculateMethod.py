@@ -21,7 +21,7 @@ class CalculateMethod:
         '''原始分布描述，散点图/箱线图'''
         return {
             'y': [list(filter(None, feature.fillna(0)))],
-            's': feature.describe().fillna(0).to_dict()
+            's': [feature.describe().fillna(0).to_dict()]
         }
 
     @staticmethod
