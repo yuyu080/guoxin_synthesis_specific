@@ -229,21 +229,18 @@ class Specific:
     @staticmethod
     def get_query(region):
         '''构造查询'''
-        provinces = filter(None, set(each_item['province'] for each_item in region))
-        cities = filter(None, set(each_item['city'] for each_item in region))
-        provinces = map(lambda x: "company_province=='{}'".format(x), provinces)
-        cities = map(lambda x: "company_county=='{}'".format(x), cities)
-        province_filter = '|'.join(provinces)
-        city_filter = '|'.join(cities)
-
-        if province_filter and city_filter:
-            return province_filter + '|' + city_filter
-        elif province_filter:
-            return province_filter
-        elif city_filter:
-            return city_filter
-        else:
-            return ''
+        def get_item_query(item):
+            province = item['province']
+            city = item['city']
+            if province and city:
+                return "(company_province=='{}'&company_county=='{}')".format(province, city)
+            elif province:
+                return "company_province=='{}'".format(province)
+            elif city:
+                return "company_county=='{}'".format(city)
+            else:
+                return ''
+        return '|'.join(filter(None, map(lambda item: get_item_query(item), region)))
 
     @staticmethod
     def get_specific_args_obj(input_args, col_mapping):
