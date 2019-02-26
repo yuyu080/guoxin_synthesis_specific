@@ -7,12 +7,18 @@ from .CalculateMethod import CalculateMethod
 class TimeSeriesAnalysis:
 
     @staticmethod
-    def grouped_analysis(dfs, analysis_col, group_col):
+    def grouped_analysis(dfs, analysis_col, group_col, query=''):
         '''地区、成立年限、公司类型'''
-        return map(
-            lambda df: df[analysis_col].groupby(df[group_col]),
-            dfs
-        )
+        if query:
+            return map(
+                lambda df: df[analysis_col].query(query).groupby(df[group_col]),
+                dfs
+            )
+        else:
+            return map(
+                lambda df: df[analysis_col].groupby(df[group_col]),
+                dfs
+            )
 
     @staticmethod
     def total_analysis(dfs, analysis_col):

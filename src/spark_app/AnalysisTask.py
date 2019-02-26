@@ -85,6 +85,7 @@ class Sample:
         ).select(
             index_df.city.alias('company_county'),
             index_df.company_industry,
+            index_df.company_province,
             index_df.company_type,
             fun.when(
                 index_df.esyear < 2, '0-2年'
@@ -152,7 +153,8 @@ class Synthesis:
                 'index_type': col_mapping.get(each_task['indexId'][0], ''),
                 'image_type': each_task.get('imageType', ''),
                 'result_type': each_task['resultType'],
-                'task_id': each_task['remoteTaskId']
+                'task_id': each_task['remoteTaskId'],
+                'query': ''
             }
             cols.extend(each_task['indexId'])
             tasks.append(arg)
@@ -225,6 +227,25 @@ class Specific:
     analysis_method_reverse = {v: k for k, v in analysis_method.items()}
 
     @staticmethod
+    def get_query(region):
+        '''构造查询'''
+        provinces = filter(None, set(each_item['province'] for each_item in region))
+        cities = filter(None, set(each_item['city'] for each_item in region))
+        provinces = map(lambda x: "company_province=='{}'".format(x), provinces)
+        cities = map(lambda x: "company_county=='{}'".format(x), cities)
+        province_filter = '|'.join(provinces)
+        city_filter = '|'.join(cities)
+
+        if province_filter and city_filter:
+            return province_filter + '|' + city_filter
+        elif province_filter:
+            return province_filter
+        elif city_filter:
+            return city_filter
+        else:
+            return ''
+
+    @staticmethod
     def get_specific_args_obj(input_args, col_mapping):
         '''构造专题分析参数'''
         obj = json.loads(input_args)
@@ -240,7 +261,8 @@ class Specific:
                 'index_id': each_task['indexCode'],
                 'index_ids': [],
                 'index_type': col_mapping.get(each_task['indexCode'], ''),
-                'task_id': each_task['calcRuleUid']
+                'task_id': each_task['calcRuleUid'],
+                'query': Specific.get_query(each_task['region'])
             }
             cols.append(each_task['indexCode'])
             tasks.append(arg)
@@ -294,6 +316,7 @@ class AnalysisTask:
         self.index_id = args['index_id']
         self.index_ids = args['index_ids']
         self.index_type = args['index_type']
+        self.query = args['query']
         self.df = sample.df
         self.dfs = sample.dfs
         self.local_path = LOCAL_PATH
@@ -305,7 +328,8 @@ class AnalysisTask:
             # 行为分析
             if self.analysis_type == 'behavioural_analysis':
                 grouped = BehaviouralAnalysis.grouped_analysis(
-                    self.df, self.index_id, self.analysis_method)
+                    self.df, self.index_id,
+                    self.analysis_method, self.query)
                 if self.index_type == 'disperse':
                     return CalculateMethod.value_counts(grouped)
                 elif self.index_type == 'continuous':
@@ -316,8 +340,8 @@ class AnalysisTask:
             # 时间序列分析
             if self.analysis_type == 'time_series_analysis':
                 grouped_series = TimeSeriesAnalysis.grouped_analysis(
-                    map(lambda t: t[1], self.dfs),
-                    self.index_id, self.analysis_method)
+                    map(lambda t: t[1], self.dfs), self.index_id,
+                    self.analysis_method, self.query)
                 result = map(
                     CalculateMethod.mean,
                     grouped_series)
@@ -327,7 +351,8 @@ class AnalysisTask:
             # 分布分析
             if self.analysis_type == 'distribution_analysis':
                 grouped = DistributionAnalysis.grouped_analysis(
-                    self.df, self.index_id, self.analysis_method)
+                    self.df, self.index_id,
+                    self.analysis_method, self.query)
                 if self.index_type == 'disperse':
                     return CalculateMethod.value_counts(grouped)
                 elif self.index_type == 'continuous':

@@ -16,6 +16,8 @@ request_logger = create_logger(logger_name='request_logger', file_name='request.
 # 打包spark依赖
 os.system("rm ./pyfiles4spark.zip; zip -r ./pyfiles4spark.zip .")
 
+def wait(sleep_time):
+    sleep(sleep_time)
 
 def submit_task(api_task_type, spark_task_type):
     # 从接口获得任务
@@ -47,7 +49,7 @@ def main():
         api_task_type, spark_task_type = choice(TASK_TYPE)
         executor.submit(submit_task, api_task_type, spark_task_type)
 
-        sleep(5)
+        wait(5)
 
 
 
