@@ -57,7 +57,7 @@ class Sample:
         target_dt = []
         last_dt_month = ''
         for each_dt in dts:
-            now_dt_month = datetime.datetime.strptime(each_dt, '%Y-%m-%d').strftime('%Y-%m')
+            now_dt_month = datetime.datetime.strptime(each_dt, '%Y%m%d').strftime('%Y-%m')
             if now_dt_month != last_dt_month:
                 target_dt.append(each_dt)
             else:
