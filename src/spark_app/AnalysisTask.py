@@ -69,9 +69,11 @@ class Sample:
     @staticmethod
     def check_col_exist(index_cols, table_cols):
         '''判断字段是否存在'''
+        s0 = set(['company_county', 'company_industry',
+                  'company_province', 'company_type', 'openfrom'])
         s1 = set(index_cols)
         s2 = set(table_cols)
-        return list(s2.intersection(s1))
+        return list(s2.intersection(s1.difference(s0)))
 
     def get_pandas_df(self, field_id, index_cols, table_dt):
         '''获取单个样本'''
@@ -307,6 +309,7 @@ class Specific:
                 else:
                     arg['task_status'] = 2
             except Exception as e:
+                task_logger.error("子任务失败: {}".format(arg['task_id']), exc_info=True)
                 traceback.print_exc()
                 arg['task_result'] = "ERROR: " + repr(e).replace("\'", '')
                 # 失败
