@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 import traceback
+import datetime
 import logging
 import json
 
@@ -49,11 +50,21 @@ class Sample:
     @staticmethod
     def get_table_partition(table):
         '''获取所有分区'''
-        dts = map(
+        dts = sorted(map(
             lambda r: r.partition.split('=')[1],
-            spark.sql('show partitions {}'.format(INDEX_TABLE)).collect()
-        )
-        return list(dts)
+            spark.sql('show partitions {}'.format(table)).collect()
+        ))
+        target_dt = []
+        last_dt_month = ''
+        for each_dt in dts:
+            now_dt_month = datetime.datetime.strptime(each_dt, '%Y-%m-%d').strftime('%Y-%m')
+            if now_dt_month != last_dt_month:
+                target_dt.append(each_dt)
+            else:
+                pass
+            last_dt_month = now_dt_month
+
+        return target_dt
 
     @staticmethod
     def check_col_exist(index_cols, table_cols):
@@ -85,7 +96,7 @@ class Sample:
         ).select(
             index_df.city.alias('company_county'),
             index_df.company_industry,
-            index_df.company_province,
+            index_df.province.alias('company_province'),
             index_df.company_type,
             fun.when(
                 index_df.esyear < 2, '0-2年'
@@ -601,7 +612,7 @@ if __name__ == '__main__':
     INTF_ADDR = 'http://10.28.103.21:8899'
 
     # 基础指标库
-    INDEX_TABLE = 'guoxin.test'
+    INDEX_TABLE = 'guoxin.test_new'
     # 指标映射表
     INDEX_MAPPING_TABLE = 'guoxin.continuity'
 

@@ -20,6 +20,7 @@ class CalculateMethod:
     def describe_info(feature):
         '''原始分布描述，散点图/箱线图'''
         return {
+            'x': [feature.name],
             'y': [list(filter(None, feature.fillna(0)))],
             's': [feature.describe().fillna(0).to_dict()]
         }
@@ -35,6 +36,7 @@ class CalculateMethod:
     @staticmethod
     def group_info(grouped):
         '''原始分布，散点图/箱线图'''
+        grouped = sorted(grouped)
         return {
             'x': [each_group for each_group, v in grouped],
             'y': [list((filter(None, v.fillna(0).values))) for each_group, v in grouped],
@@ -44,6 +46,7 @@ class CalculateMethod:
     @staticmethod
     def group_describe(grouped):
         '''分区分布描述'''
+        grouped = sorted(grouped)
         return {each_group: v.describe().fillna(0).to_dict() for each_group, v in grouped}
 
     @staticmethod
