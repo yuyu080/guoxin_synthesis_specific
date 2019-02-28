@@ -95,6 +95,8 @@ class Sample:
         ).join(
             index_df,
             'bbd_qyxx_id'
+        ).dropDuplicates(
+            ['bbd_qyxx_id']
         ).select(
             index_df.city.alias('company_county'),
             index_df.company_industry,
