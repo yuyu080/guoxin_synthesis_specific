@@ -9,7 +9,7 @@ LOG_DIR = BASE_DIR + '/logs/'
 def create_logger(log_dir=LOG_DIR, logger_name='default', file_name='default.log'):
     fh = RotatingFileHandler(log_dir+file_name,
                              encoding='utf-8',
-                             maxBytes=1024 * 3072, backupCount=30) #按照日志大小拆分
+                             maxBytes=1024 * 1024 * 20, backupCount=30) #按照日志大小拆分
     logger = logging.getLogger(logger_name) #获得一个logger对象，默认是root
     logger.setLevel(logging.INFO)  #设置最低等级debug
     fm = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
