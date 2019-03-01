@@ -36,7 +36,7 @@ class CalculateMethod:
     @staticmethod
     def group_info(grouped):
         '''原始分布，散点图/箱线图'''
-        grouped = sorted(grouped)
+        # grouped = sorted(grouped)
         return {
             'x': [each_group for each_group, v in grouped],
             'y': [list((filter(None, v.fillna(0).values))) for each_group, v in grouped],
