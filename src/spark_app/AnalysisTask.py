@@ -151,6 +151,16 @@ class Synthesis:
     analysis_method_reverse = {v: k for k, v in analysis_method.items()}
 
     @staticmethod
+    def get_analysis_method(each_task):
+        '''根据传入字段判断分析方法'''
+        if each_task['ordinate'] != 'REGION':
+            return Specific.analysis_method[each_task['ordinate']]
+        else:
+            # 如果省份不为空就按省份统计，要么就按城市统计
+            province = [each_region['province'] for each_region in each_task['region'] if each_region['province']]
+            return 'company_province' if province else 'company_county'
+
+    @staticmethod
     def get_synthesis_args_obj(input_args, col_mapping):
         '''构造综合分析task参数'''
         obj = json.loads(input_args)
@@ -258,6 +268,16 @@ class Specific:
         return '|'.join(filter(None, map(lambda item: get_item_query(item), region)))
 
     @staticmethod
+    def get_analysis_method(each_task):
+        '''根据传入字段判断分析方法'''
+        if each_task['ordinate'] != 'REGION':
+            return Specific.analysis_method[each_task['ordinate']]
+        else:
+            # 如果省份不为空就按省份统计，要么就按城市统计
+            province = [each_region['province'] for each_region in each_task['region'] if each_region['province']]
+            return 'company_province' if province else 'company_county'
+
+    @staticmethod
     def get_specific_args_obj(input_args, col_mapping):
         '''构造专题分析参数'''
         obj = json.loads(input_args)
@@ -269,7 +289,7 @@ class Specific:
             arg = {
                 'analysis_model': 'specific_analysis',
                 'analysis_type': Specific.analysis_type[each_task['analyseType']],
-                'analysis_method': Specific.analysis_method[each_task['ordinate']],
+                'analysis_method': Specific.get_analysis_method(each_task),
                 'index_id': each_task['indexCode'],
                 'index_ids': [],
                 'index_type': col_mapping.get(each_task['indexCode'], ''),
