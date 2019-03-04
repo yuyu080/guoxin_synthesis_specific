@@ -41,7 +41,7 @@ class Sample:
             self.dfs = list(
                 map(
                     lambda each_partition: (
-                        each_partition,
+                        datetime.datetime.strptime(each_partition, '%Y-%m-%d').strftime('%Y-%m'),
                         self.get_pandas_df(
                             field_id, index_cols, each_partition)),
                     partitions))
