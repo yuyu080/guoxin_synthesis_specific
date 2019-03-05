@@ -158,7 +158,13 @@ class Synthesis:
         else:
             # 如果省份不为空就按省份统计，要么就按城市统计
             province = [each_region['province'] for each_region in each_task['region'] if each_region['province']]
-            return 'company_province' if province else 'company_county'
+            city = [each_region['city'] for each_region in each_task['region'] if each_region['city']]
+            if province:
+                return 'company_province'
+            elif city:
+                return 'company_county'
+            else:
+                return 'company_province'
 
     @staticmethod
     def get_synthesis_args_obj(input_args, col_mapping):
@@ -275,7 +281,13 @@ class Specific:
         else:
             # 如果省份不为空就按省份统计，要么就按城市统计
             province = [each_region['province'] for each_region in each_task['region'] if each_region['province']]
-            return 'company_province' if province else 'company_county'
+            city = [each_region['city'] for each_region in each_task['region'] if each_region['city']]
+            if province:
+                return 'company_province'
+            elif city:
+                return 'company_county'
+            else:
+                return 'company_province'
 
     @staticmethod
     def get_specific_args_obj(input_args, col_mapping):
