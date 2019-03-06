@@ -21,7 +21,7 @@ class CalculateMethod:
         '''原始分布描述，散点图/箱线图'''
         return {
             'x': [feature.name],
-            'y': [list(filter(None, feature.fillna(0)))],
+            'y': [list(feature.fillna(0))],
             's': [feature.describe().fillna(0).to_dict()]
         }
 
@@ -39,7 +39,7 @@ class CalculateMethod:
         # grouped = sorted(grouped)
         return {
             'x': [each_group for each_group, v in grouped],
-            'y': [list((filter(None, v.fillna(0).values))) for each_group, v in grouped],
+            'y': [list(v.fillna(0).values) for each_group, v in grouped],
             's': [v.describe().fillna(0).to_dict() for each_group, v in grouped]
         }
 
