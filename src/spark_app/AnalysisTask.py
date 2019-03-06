@@ -649,7 +649,7 @@ if __name__ == '__main__':
     INTF_ADDR = 'http://10.28.103.21:8899'
 
     # 基础指标库
-    INDEX_TABLE = 'guoxin.test_new'
+    INDEX_TABLE = 'guoxin.test'
     # 指标映射表
     INDEX_MAPPING_TABLE = 'guoxin.continuity'
 
