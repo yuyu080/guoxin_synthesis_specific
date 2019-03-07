@@ -98,7 +98,7 @@ class Sample:
             'bbd_qyxx_id'
         ).join(
             index_df,
-            'bbd_qyxx_id'
+            sample_df.bbd_qyxx_id == index_df.bbd_qyxx_id
         ).dropDuplicates(
             ['bbd_qyxx_id']
         ).select(
