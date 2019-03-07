@@ -87,6 +87,10 @@ class Sample:
             '_c0', 'bbd_qyxx_id'
         ).withColumnRenamed(
             '_c1', 'company_name'
+        ).withColumnRenamed(
+            '_c2', 'province'
+        ).withColumnRenamed(
+            '_c3', 'city'
         )
 
         # 获取指标
@@ -98,9 +102,9 @@ class Sample:
         ).dropDuplicates(
             ['bbd_qyxx_id']
         ).select(
-            index_df.city.alias('company_county'),
+            sample_df.city.alias('company_county'),
             index_df.company_industry,
-            index_df.province.alias('company_province'),
+            sample_df.province.alias('company_province'),
             index_df.company_type,
             fun.when(
                 index_df.esyear < 2, '0-2年'
@@ -540,7 +544,8 @@ def get_and_save_es_data(field_id):
     '''从es获取样本，下载到本地，并上传HDFS'''
     es = Elasticsearch([{'host': ES_NODES, 'port': ES_PORT}])
     es_utils = ES_Utiles(es, LOCAL_ES_SOURCE, HDFS_OUT, HDFS_IN)
-    es_utils.get_and_save_es_data('common_company_field', ['bbd_qyxx_id', 'company_name'],
+    es_utils.get_and_save_es_data('common_company_field', ['bbd_qyxx_id', 'company_name',
+                                                           'province', 'city'],
                                   'field_name_list_' + field_id,
                                   'bbd_qyxx_id', 'fieldId', field_id)
 
