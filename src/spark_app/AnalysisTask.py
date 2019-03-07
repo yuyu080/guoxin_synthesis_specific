@@ -114,6 +114,10 @@ class Sample:
                 '0-2年'
             ).alias('openfrom'),
             *Sample.check_col_exist(index_cols, index_df.columns)
+        ).fillna(
+            '-'
+        ).fillna(
+            0
         )
 
         return tid_df.toPandas().fillna(0).fillna('-')
