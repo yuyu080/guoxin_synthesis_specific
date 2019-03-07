@@ -94,9 +94,7 @@ class Sample:
         )
 
         # 获取指标
-        tid_df = sample_df.select(
-            'bbd_qyxx_id'
-        ).join(
+        tid_df = sample_df.join(
             index_df,
             sample_df.bbd_qyxx_id == index_df.bbd_qyxx_id
         ).dropDuplicates(
