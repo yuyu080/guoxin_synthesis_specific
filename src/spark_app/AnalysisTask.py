@@ -115,7 +115,7 @@ class Sample:
             ).alias('openfrom'),
             *Sample.check_col_exist(index_cols, index_df.columns)
         ).fillna(
-            '-'
+            '未知'
         ).fillna(
             0
         )
