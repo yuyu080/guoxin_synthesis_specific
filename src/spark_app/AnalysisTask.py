@@ -91,6 +91,8 @@ class Sample:
             '_c2', 'province'
         ).withColumnRenamed(
             '_c3', 'city'
+        ).withColumnRenamed(
+            '_c4', 'company_type'        
         )
 
         # 获取指标
@@ -103,7 +105,7 @@ class Sample:
             sample_df.city.alias('company_county'),
             index_df.company_industry,
             sample_df.province.alias('company_province'),
-            index_df.company_type,
+            sample_df.company_type,
             fun.when(
                 index_df.esyear < 2, '0-2年'
             ).when(
@@ -547,7 +549,7 @@ def get_and_save_es_data(field_id):
     es = Elasticsearch([{'host': ES_NODES, 'port': ES_PORT}])
     es_utils = ES_Utiles(es, LOCAL_ES_SOURCE, HDFS_OUT, HDFS_IN)
     es_utils.get_and_save_es_data('common_company_field', ['bbd_qyxx_id', 'company_name',
-                                                           'province', 'city'],
+                                                           'province', 'city', 'company_type'],
                                   'field_name_list_' + field_id,
                                   'bbd_qyxx_id', 'fieldId', field_id)
 
